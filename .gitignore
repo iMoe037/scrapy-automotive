@@ -119,3 +119,4 @@ ENV/
 # Project
 automotive/automotive/spiders/test_spider.py
 automotive/*.csv
+automotive/*.json
