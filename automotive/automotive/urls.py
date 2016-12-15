@@ -2,7 +2,6 @@ urls = [
 	"http://www.caranddriver.com/acura",
 	"http://www.caranddriver.com/alfa-romeo",
 	"http://www.caranddriver.com/aston-martin",
-	"http://www.caranddriver.com/alfa-romeo",
 	"http://www.caranddriver.com/audi",
 	"http://www.caranddriver.com/bentley",
 	"http://www.caranddriver.com/bmw",

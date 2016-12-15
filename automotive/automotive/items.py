@@ -20,6 +20,7 @@ class AutomotiveItem(scrapy.Item):
 	transmission = scrapy.Field()
 	dimensions = scrapy.Field()
 	img_url = scrapy.Field()
+	images = scrapy.Field()
 	summary = scrapy.Field()
 	overview = scrapy.Field()
 	rating = scrapy.Field()
@@ -28,4 +29,6 @@ class AutomotiveItem(scrapy.Item):
 	zero_sixty = scrapy.Field()
 	hp = scrapy.Field()
 	top_speed = scrapy.Field()
+	ln_type = scrapy.Field()
+	links = scrapy.Field()
 	pass
