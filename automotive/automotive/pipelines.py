@@ -18,4 +18,8 @@ class AutomotivePipeline(object):
 		return item
 
 	def convert_rating(self, rating):
-		return float(''.join(filter(lambda x: x.isdigit(), rating))) * .05
+		rating = ''.join(i for i in rating if i.isdigit())
+		if rating:
+			return str(float(rating) * .05)
+		else:
+			return 'N/A'

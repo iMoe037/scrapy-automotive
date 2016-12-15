@@ -30,4 +30,5 @@ class AutomotiveItem(scrapy.Item):
 	hp = scrapy.Field()
 	top_speed = scrapy.Field()
 	ln_type = scrapy.Field()
+	links = scrapy.Field()
 	pass

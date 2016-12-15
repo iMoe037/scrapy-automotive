@@ -43,58 +43,58 @@ class Automotive(scrapy.Spider):
 		car['transmission'] = func.format_paragraph('TRANSMISSION:', verdict_box)
 		car['dimensions'] = func.parse_dimensions(verdict_box)
 
-# Check if leftlane version of car exists
-		models = ln.get_models(car['make'])
-		if(models):
-			to_model = ln.get_link(car['make'], car['model'])
-			if to_model  == None:
-				yield
-			else:
-				yield websites.get_url(car, to_model, self.left_lane_model)
-		else:
-			left_lane_models = 'http://www.leftlanenews.com/new-car-buying/' + car['make'].lower() + '/'
-			yield websites.get_url(car, left_lane_models, self.left_lane_makes)
+		left_lane_models = 'http://www.leftlanenews.com/new-car-buying/' + websites.space_to_dash(car['make']) + '/'
+		yield websites.get_url(car, left_lane_models, self.left_lane_makes)
 
 # Left lane Make and Models
 	def left_lane_makes(self, response):
 		car = response.meta['car']
 		models = response.css('ul.car_list > li')
-		ln.add_make_models(car['make'], models)
-		to_model = ln.get_link(car['make'], car['model'])
-		if to_model  == None:
-			yield
+		ln_car_link = ln.find_model(car['model'], models)
+		if ln_car_link == None:
+			yield car
 		else:
-			yield websites.get_url(car, to_model, self.left_lane_model)
+			yield websites.get_url(car, ln_car_link, self.ln_model)
+
+# Left Lane Specfic car page
+	def ln_model(self, response):
+		car = response.meta['car']
+		links = {}
+		links['images'] = response.css('div.large_image > div.left > a::attr(href)').extract_first()
+		links['specs'] = response.css('li#overview-tab + li > a::attr(href)').extract_first()
+		car['links'] = links 
+		if links['images'] == None:
+			yield car
+		else:
+			yield websites.get_url(car, links['images'], self.ln_images)
+
 		
-
-# Left Lane Specific car page
-	def left_lane_model(self,response):
+# Left Lane Specific Car Images
+	def ln_images(self, response):
 		car = response.meta['car']
-		img_link = response.css('div.large_image > div.left > a::attr(href)').extract_first()
-		yield websites.get_url(car, img_link, self.left_lane_images)
-
-# Left Lane Images
-	def left_lane_images(self, response):
-		car = response.meta['car']
+# Handle Count
 		if response.meta.get('count'):
 			count = response.meta['count']
-			if count > 3:
-				print('Done')
-				return car
+		else:
+			count = 0
 
-		car = response.meta['car']
-		if not car.get('images'):
-			car['images'] = []
-		image = response.css('img.large::attr(src)').extract_first()
-		if image != None:
-			if response.meta.get('count'):
-				count = response.meta['count']
+		if count > 4:
+			if car['links']['specs'] == None:
+				yield car
 			else:
-				count = 0
-			image = 'http:' + image
-			car['images'].append(image)
+				yield websites.get_url(car, car['links']['specs'],self.ln_specs)
+		else:
+			car['images'] = ln.get_image(response)
 			next_image = response.css('div.image-button > a + a::attr(href)').extract_first()
-			return websites.get_url(car,next_image, self.left_lane_images, count)
+			yield websites.get_url(car, next_image, self.ln_images, count)
+
+# Get Leftlane Specs
+	def ln_specs(self, response):
+		car = response.meta['car']
+		style = websites.strip_str(scrapy.Selector(response=response).xpath('//*[@id="Body Style"]/text()').extract_first())
+		car['ln_type'] = style
+		return car
+
 
 
 
