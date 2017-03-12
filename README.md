@@ -1,5 +1,7 @@
 # Scrapy-AutoMotive
 
+## Update - Due to caranddriver transitioning from static HTML to Angular Components. This Script is no longer working and is not being actively maintained.
+
 This project uses Scrapy to scape car data from the web.
 
 What infomation does it pull?
